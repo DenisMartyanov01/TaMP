@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2024-02-29T08:49:35.657Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36" etag="sOHopX8UKjo7ktZlS8A1" version="23.1.7" type="github">
+<mxfile host="app.diagrams.net" modified="2024-03-06T13:05:31.699Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36" etag="mqeUwX_LI7YhPpdKbl-q" version="24.0.0" type="github">
   <diagram name="Страница — 1" id="Y_MSueDvMAxtepzq8LtV">
-    <mxGraphModel dx="911" dy="523" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1179" dy="676" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -8,10 +8,10 @@
           <mxGeometry x="60" y="130" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="NAd22-JIo6woVSlLRPpV-2" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
-          <mxGeometry x="240" y="390" width="30" height="60" as="geometry" />
+          <mxGeometry x="260" y="390" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="NAd22-JIo6woVSlLRPpV-3" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
-          <mxGeometry x="40" y="490" width="30" height="60" as="geometry" />
+          <mxGeometry x="110" y="490" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="NAd22-JIo6woVSlLRPpV-7" value="sign in" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="324" y="190" width="90" height="50" as="geometry" />
@@ -47,7 +47,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="NAd22-JIo6woVSlLRPpV-18" value="add a message to a music file" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="430" y="310" width="95" height="60" as="geometry" />
+          <mxGeometry x="434.87" y="310" width="95" height="60" as="geometry" />
         </mxCell>
         <mxCell id="NAd22-JIo6woVSlLRPpV-19" value="find the shortest distance between the vertices of a graph" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="420" y="450" width="135" height="65" as="geometry" />
@@ -107,7 +107,7 @@
           <mxGeometry x="370" y="300" width="210" height="220" as="geometry" />
         </mxCell>
         <mxCell id="xoTfcCaX8LSDZ_gg_ZAu-5" value="admin`s functions" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;" parent="1" vertex="1">
-          <mxGeometry x="370" y="550" width="229.5" height="170" as="geometry" />
+          <mxGeometry x="400" y="560" width="180" height="140" as="geometry" />
         </mxCell>
         <mxCell id="xoTfcCaX8LSDZ_gg_ZAu-6" value="find the root by Newton&#39;s method" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="430" y="380" width="104.75" height="60" as="geometry" />
@@ -136,13 +136,13 @@
             <mxPoint x="375" y="140" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="dUkZkbzh-Rxikhl5S8kX-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="NAd22-JIo6woVSlLRPpV-7" target="NAd22-JIo6woVSlLRPpV-2">
+        <mxCell id="dUkZkbzh-Rxikhl5S8kX-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="NAd22-JIo6woVSlLRPpV-7" target="NAd22-JIo6woVSlLRPpV-2" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="274" y="360" as="sourcePoint" />
             <mxPoint x="324" y="310" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="dUkZkbzh-Rxikhl5S8kX-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="NAd22-JIo6woVSlLRPpV-7" target="NAd22-JIo6woVSlLRPpV-3">
+        <mxCell id="dUkZkbzh-Rxikhl5S8kX-9" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="NAd22-JIo6woVSlLRPpV-7" target="NAd22-JIo6woVSlLRPpV-3" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="379" y="250" as="sourcePoint" />
             <mxPoint x="228" y="450" as="targetPoint" />
