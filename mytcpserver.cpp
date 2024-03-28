@@ -1,9 +1,9 @@
 #include "mytcpserver.h"
+#include "functionsforserver.h"
 
-MyTcpServer::~MyTcpServer() // проблема в диструторе
+MyTcpServer::~MyTcpServer()
 {
     mTcpServer->close();
-    clients.clear();
     //server_status=0;
 }
 
@@ -15,44 +15,34 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
 
     if(!mTcpServer->listen(QHostAddress::Any, 33333)){
         qDebug() << "server is not started";
-    } else {
+    }
+    else {
         //server_status=1;
         qDebug() << "server is started";
     }
 }
 
 void MyTcpServer::slotNewConnection(){
- //   if(server_status==1){
-        QTcpSocket* mTcpSocket = mTcpServer->nextPendingConnection();
-        mTcpSocket->write("Hello, World!!! I am echo server!\r\n");
-        connect(mTcpSocket, &QTcpSocket::readyRead,this,&MyTcpServer::slotServerRead);
-        connect(mTcpSocket,&QTcpSocket::disconnected,this,&MyTcpServer::slotClientDisconnected);
-        clients.append(MyClient(mTcpSocket,"",mTcpSocket->socketDescriptor()));
-   // }
+    QTcpSocket *current_socket;
+    current_socket = mTcpServer->nextPendingConnection();
+    connect(current_socket, &QTcpSocket::readyRead, this, &MyTcpServer::slotServerRead);
+    connect(current_socket, &QTcpSocket::disconnected, this, &MyTcpServer::slotClientDisconnected);
+    mTcpSocket.insert(current_socket->socketDescriptor(), current_socket);
 }
 
 void MyTcpServer::slotServerRead(){
     QString res = "";
-    QTcpSocket* mTcpSocket = (QTcpSocket *)sender();
-    while(mTcpSocket->bytesAvailable()>0)
+    QTcpSocket *current_socket = mTcpSocket[((QTcpSocket *)sender())->socketDescriptor()];
+    while (current_socket->bytesAvailable() > 0)
     {
-        QByteArray array =mTcpSocket->readAll();
-        qDebug()<<array;
-        if(array=="\x01")
-        {
-            mTcpSocket->write(res.toUtf8());
-            res = "";
-        }
-        else
-            res.append(array);
+        QByteArray array = current_socket->readAll();
+        res.append(array);
     }
-    // проблема с логином, добавить set login в parsing? или вернуться к её эхо-серверу
-    mTcpSocket->write(parsing(mTcpSocket->socketDescriptor(),res.toUtf8().trimmed()));
-
+    current_socket->write(parsing(res));
 }
 
 void MyTcpServer::slotClientDisconnected(){
-    QTcpSocket* mTcpSocket = (QTcpSocket *)sender();
-
-    mTcpSocket->close();
+    int key = QTcpSocket(sender()).socketDescriptor();
+    mTcpSocket[key]->close();
+    mTcpSocket.remove(key);
 }

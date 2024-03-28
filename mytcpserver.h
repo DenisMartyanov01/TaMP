@@ -1,15 +1,15 @@
 #ifndef MYTCPSERVER_H
 #define MYTCPSERVER_H
 
-#include <QObject>
+#include <QCoreApplication>
+#include <QByteArray>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QtNetwork>
-#include <QByteArray>
-#include <QDebug>
 #include <QString>
-#include "functionsforserver.h" //пишет пока не используется, но в cpp используется
-#include "myclient.h"
+#include <QObject>
+#include <QDebug>
+#include <QMap>
 
 class MyTcpServer : public QObject
 {
@@ -23,7 +23,6 @@ public slots:
     void slotServerRead();
 private:
     QTcpServer * mTcpServer;
-    QList<MyClient> clients;
-    //int server_status;
+    QMap<int, QTcpSocket*> mTcpSocket;
 };
 #endif // MYTCPSERVER_H

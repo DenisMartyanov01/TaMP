@@ -1,8 +1,7 @@
 QT -= gui
-
+QT += sql
 QT += network #Для работы с сетью
-
-#QT += widgets
+QT += network sql
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -21,9 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     functionsforserver.cpp \
     main.cpp \
-    myclient.cpp \
     mydb.cpp \
-    mydb_destroyer.cpp \
     mytcpserver.cpp
 
 # Default rules for deployment.
@@ -33,7 +30,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     functionsforserver.h \
-    myclient.h \
     mydb.h \
-    mydb_destroyer.h \
     mytcpserver.h

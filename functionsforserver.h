@@ -2,13 +2,16 @@
 #define FUNCTIONSFORSERVER_H
 
 #include <QByteArray>
-#include <QDebug>
 #include <QString>
+#include <QStringList>
 
-QByteArray parsing(int, QString);
-QByteArray auth(int, QString, QString);
+#include "mydb.h"
+#include <regex>
+
+QByteArray parsing(QString);
+QByteArray auth(QString, QString);
 QByteArray reg(QString, QString, QString);
-QByteArray lookmystat(int);
-QByteArray lookallstat();
+QByteArray lookmystat(QString, QString);
+QByteArray lookallstat(QString, QString);
 
 #endif // FUNCTIONSFORSERVER_H
