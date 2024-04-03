@@ -17,7 +17,7 @@ QByteArray parsing(QString Request)
     {
         return auth(parts.at(1), parts.at(2));
     }
-    else if (parts.contains("regist") && parts.length() > 2)
+    else if (parts.contains("reg") && parts.length() > 2)
     {
         return reg(parts.at(1), parts.at(2), parts.at(3));
     }
@@ -105,7 +105,8 @@ QByteArray lookmystat(QString Login, QString Password)
 QByteArray lookallstat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT * FROM users IF admins.login = :login and admins.password = :password;"); //проверка на наличие прав
+    // Src.append("SELECT * FROM users IF admins.login = :login and admins.password = :password;"); //проверка на наличие прав
+    Src.append("SELECT * FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
