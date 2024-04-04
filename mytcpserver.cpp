@@ -43,6 +43,6 @@ void MyTcpServer::slotServerRead(){
 
 void MyTcpServer::slotClientDisconnected(){
     int key = QTcpSocket(sender()).socketDescriptor();
-    mTcpSocket[key]->close();
+ //   mTcpSocket[key]->close();
     mTcpSocket.remove(key);
 }

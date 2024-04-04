@@ -55,20 +55,13 @@ QStringList MyDB::queryToDB(QStringList Src)
     }
 
     QStringList res;
-    if (Src[0].contains("SELECT"))
-    {
-        if (query.exec() && query.first())
-        {
-            res.append("found");
-            return res;
-        }
-    }
-    else
-    {
-        if (query.exec())
-        {
-            res.append("complete");
-            return res;
+    query.exec();
+    if (query.exec()) {
+        while (query.next()) {
+            QSqlRecord record = query.record();
+            for (int j = 0; j < record.count(); ++j) {
+                res.append(record.value(j).toString());
+            }
         }
     }
     return res;

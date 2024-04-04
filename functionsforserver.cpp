@@ -60,7 +60,7 @@ QByteArray reg(QString Login, QString Password, QString Email)
         Src.append(Login);
         Src.append(":password");
         Src.append(Password);
-        Src = MyDB::get_instance().queryToDB(Src); //проверка на наличие в бд
+        Src = MyDB::get_instance().queryToDB(Src);
         if (Src.size() > 0)
         {
             return QByteArray("accountExists\r\n");
@@ -90,12 +90,12 @@ QByteArray reg(QString Login, QString Password, QString Email)
 QByteArray lookmystat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT login, password FROM users WHERE login = :login and password = :password;");
+    Src.append("SELECT login, password FROM users WHERE login = :login and password = :password UNION SELECT login, password FROM admins WHERE login = :login AND password = :password;"); // вывод данных как user так и admin
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
     Src.append(Password);
-    Src = MyDB::get_instance().queryToDB(Src); //проверка на наличие в бд
+    Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
         return QByteArray("mystatComplete\r\n");
     else
@@ -105,13 +105,12 @@ QByteArray lookmystat(QString Login, QString Password)
 QByteArray lookallstat(QString Login, QString Password)
 {
     QStringList Src;
-    // Src.append("SELECT * FROM users IF admins.login = :login and admins.password = :password;"); //проверка на наличие прав
     Src.append("SELECT * FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
     Src.append(Password);
-    Src = MyDB::get_instance().queryToDB(Src); //проверка на наличие в бд
+    Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
         return QByteArray("allstatComplete\r\n");
     else
