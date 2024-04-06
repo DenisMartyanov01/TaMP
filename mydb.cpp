@@ -14,7 +14,7 @@ MyDB::MyDB()
 bool MyDB::createTable()
 {
     QSqlQuery query(db);
-    return query.exec("create table users(id integer primary key not null, login text not null unique, password text not null, email text not null unique);");
+    return query.exec("create table users(id integer primary key not null, login text not null unique, password text not null, email text not null unique UNION CREATE table admins (id integer primary key not null, login text not null unique, password text not null, email text not null unique, task text, solution text));");
 }
 
 MyDB::~MyDB()
@@ -56,13 +56,15 @@ QStringList MyDB::queryToDB(QStringList Src)
 
     QStringList res;
     query.exec();
-    if (query.exec()) {
+    //if (query.exec()) {
         while (query.next()) {
             QSqlRecord record = query.record();
+            QString asd="";
             for (int j = 0; j < record.count(); ++j) {
-                res.append(record.value(j).toString());
+                asd.append(record.value(j).toString()).append("%");
             }
+            res.append(asd);
         }
-    }
+    //}
     return res;
 }

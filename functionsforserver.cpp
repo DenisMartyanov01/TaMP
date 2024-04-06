@@ -67,6 +67,7 @@ QByteArray reg(QString Login, QString Password, QString Email)
         }
         else
         {
+            Src.clear();
             Src.append("INSERT INTO users (login, password, email) VALUES (:login, :password, :email);");
             Src.append(":login");
             Src.append(Login);
@@ -74,6 +75,13 @@ QByteArray reg(QString Login, QString Password, QString Email)
             Src.append(Password);
             Src.append(":email");
             Src.append(Email);
+            Src = MyDB::get_instance().queryToDB(Src);
+            Src.clear();
+            Src.append("SELECT login, password FROM users WHERE login = :login and password = :password;");
+            Src.append(":login");
+            Src.append(Login);
+            Src.append(":password");
+            Src.append(Password);
             Src = MyDB::get_instance().queryToDB(Src);
             if (Src.size() > 0)
                 return (QString("regComplete&") + Login + "\n").toUtf8();
@@ -97,7 +105,15 @@ QByteArray lookmystat(QString Login, QString Password)
     Src.append(Password);
     Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
-        return QByteArray("mystatComplete\r\n");
+    {
+        QString res = "mystat&";
+        while(Src.size()>0)
+        {
+            res.append(Src.front()).append("&");
+            Src.pop_front();
+        }
+        return res.toUtf8();
+    }
     else
         return QByteArray("mystatError\r\n");
 }
