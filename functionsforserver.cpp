@@ -128,7 +128,15 @@ QByteArray lookallstat(QString Login, QString Password)
     Src.append(Password);
     Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
-        return QByteArray("allstatComplete\r\n");
+    {
+        QString res = "allstatComplete&";
+        while(Src.size() > 0)
+        {
+            res.append(Src.front()).append("&");
+            Src.pop_front();
+        }
+        return res.toUtf8();
+    }
     else
         return QByteArray("allstatError\r\n");
 }
