@@ -35,12 +35,12 @@ QByteArray parsing(QString Request)
     {
         bool conversionOk;
         int size = parts.at(2).toInt(&conversionOk);
-        if (!conversionOk || parts.size() != size*size + 2)
+        if (!conversionOk) //|| parts.size() != size*size + 2
         {
             return "Invalid graph data format";
         }
         std::vector<std::vector<int>> graph(size, std::vector<int>(size, 0));
-        int dataIndex = 2;
+        int dataIndex = 3;
         for (int i = 0; i < size; ++i)
         {
             for (int j = 0; j < size; ++j)
@@ -299,6 +299,7 @@ QByteArray allShortestPaths(const QString& Login, const std::vector<std::vector<
         taskInfo.append(Login);
         // Выполняем запрос
         MyDB::get_instance().queryToDB(taskInfo);
+        qDebug() << "dataSave\r\n";
     }
     return result;
 }
