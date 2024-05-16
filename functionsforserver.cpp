@@ -150,7 +150,7 @@ QByteArray lookmystat(QString Login, QString Password)
 QByteArray lookallstat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT * FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
+    Src.append("SELECT id, login, email, task, solution FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
@@ -158,10 +158,10 @@ QByteArray lookallstat(QString Login, QString Password)
     Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
     {
-        QString res = "allstatComplete&";
+        QString res = "allstatComplete\r\n";
         while(Src.size() > 0)
         {
-            res.append(Src.front()).append("&");
+            res.append(Src.front()).append("\r\n");
             Src.pop_front();
         }
         return res.toUtf8();
