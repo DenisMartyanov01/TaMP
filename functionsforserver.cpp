@@ -10,7 +10,17 @@ bool checkValidEmail(QString Email)
     return std::regex_match(Email2, emailPattern);
 }
 
+void decreaseGraphCount(const QString& login)
+{
+    QStringList query;
+    query.append("UPDATE users SET graph = graph - 1 WHERE login = :login;");
+    query.append(":login");
+    query.append(login);
+    MyDB::get_instance().queryToDB(query);
+}
+
 int checkAuth = 0;
+QString AuthAnswer = "";
 
 QByteArray parsing(QString Request)
 {
@@ -35,8 +45,10 @@ QByteArray parsing(QString Request)
     {
         bool conversionOk;
         int size = parts.at(2).toInt(&conversionOk);
-        if (!conversionOk) //|| parts.size() != size*size + 2
+        if (!conversionOk || parts.size() != size*size + 3)
         {
+            decreaseGraphCount(parts.at(1));
+            qDebug() << "Invalid graph data format\n";
             return "Invalid graph data format";
         }
         std::vector<std::vector<int>> graph(size, std::vector<int>(size, 0));
@@ -64,7 +76,7 @@ QByteArray parsing(QString Request)
 QByteArray auth(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT login, password FROM users WHERE login = :login and password = :password;");
+    Src.append("SELECT login, password FROM users WHERE login = :login and password = :password UNION SELECT login, password FROM admins WHERE login = :login AND password = :password;");
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
@@ -73,10 +85,23 @@ QByteArray auth(QString Login, QString Password)
     if (Src.size() > 0)
     {
         checkAuth = 1;
-        return (QString("authComplete&") + Login + "\n").toUtf8();
+        AuthAnswer = Login;
+        if (Src.at(0).contains("admin"))
+        {
+            qDebug() << "user\n";
+            return (QString("admin&\n")).toUtf8();
+        }
+        else
+        {
+            qDebug() << "user\n";
+            return (QString("user&\n")).toUtf8();
+        }
     }
     else
+    {
+        qDebug() << "error\n";
         return QByteArray("authError\r\n");
+    }
 }
 
 QByteArray reg(QString Login, QString Password, QString Email)
@@ -84,7 +109,7 @@ QByteArray reg(QString Login, QString Password, QString Email)
     if (checkValidEmail(Email))
     {
         QStringList Src;
-        Src.append("SELECT login, password FROM users WHERE login = :login and password = :password;");
+        Src.append("SELECT login FROM users WHERE login = :login UNION SELECT login FROM admins WHERE login = :login;");
         Src.append(":login");
         Src.append(Login);
         Src.append(":password");
@@ -127,7 +152,7 @@ QByteArray reg(QString Login, QString Password, QString Email)
 QByteArray lookmystat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT login, password FROM users WHERE login = :login and password = :password UNION SELECT login, password FROM admins WHERE login = :login AND password = :password;"); // вывод данных как user так и admin
+    Src.append("SELECT login, graph, music, newton FROM users WHERE login = :login and password = :password UNION SELECT login, 0 AS graph, 0 AS music, 0 AS newton FROM admins WHERE login = :login AND password = :password;"); // вывод данных как user так и admin
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
@@ -150,7 +175,7 @@ QByteArray lookmystat(QString Login, QString Password)
 QByteArray lookallstat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT id, login, email, task, solution FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
+    Src.append("SELECT * FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
@@ -158,10 +183,10 @@ QByteArray lookallstat(QString Login, QString Password)
     Src = MyDB::get_instance().queryToDB(Src);
     if (Src.size() > 0)
     {
-        QString res = "allstatComplete\r\n";
+        QString res = "allstatComplete&";
         while(Src.size() > 0)
         {
-            res.append(Src.front()).append("\r\n");
+            res.append(Src.front()).append("&");
             Src.pop_front();
         }
         return res.toUtf8();
@@ -170,64 +195,107 @@ QByteArray lookallstat(QString Login, QString Password)
         return QByteArray("allstatError\r\n");
 }
 
-// std::string desEncrypt(const std::string &plainText, const std::string &key)
-// {
-//     // Инициализация контекста шифрования
-//     EVP_CIPHER_CTX *ctx;
-//     ctx = EVP_CIPHER_CTX_new();
-//     EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, (const unsigned char *)key.c_str(), NULL);
 
-//     // Выделение памяти для буфера шифрования
-//     int cipherTextLen = plainText.length() + AES_BLOCK_SIZE;
-//     unsigned char *cipherText = new unsigned char[cipherTextLen];
+QString en_alph = "abcdefghijklmnopqrstuvwxyz";
+//QString ru_alph = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
-//     // Шифрование
-//     int len;
-//     EVP_EncryptUpdate(ctx, cipherText, &len, (const unsigned char *)plainText.c_str(), plainText.length());
-//     int cipherLen = len;
+QString Encrypt(QString alphabet, QString input, QString key)
+{
+    input = input.toLower();
+    key = key.toLower();
+    QString output;
+    int key_number = 0;
+    int n = (alphabet.length());
+    int k = -1;
+    int p = -1;
 
-//     // Завершение шифрования
-//     EVP_EncryptFinal_ex(ctx, cipherText + len, &len);
-//     cipherLen += len;
+    for(int i =0; i<(input.length()); i++)
+    {
+        if (input.at(i).isLetter())
+        {
 
-//     std::string result((char *)cipherText, cipherLen);
+            //Поиск i-той буквы слова в алфавите
+            for(int z = 0; z < n; z++)
+            {
+                if(alphabet.at(z) == input.at(i))
+                {
+                    p = z;
+                    break;
+                }
+            }
+            if (p == -1) return "Ошибка.";
 
-//     // Очистка и освобождение ресурсов
-//     delete[] cipherText;
-//     EVP_CIPHER_CTX_free(ctx);
+            //Поиск i-той буквы ключа в алфавите
+            for(int j = 0; j < n;j++)
+            {
+                if(alphabet.at(j) == key.at(key_number))
+                {
+                    if(key_number == (key.length()-1)) key_number=0;
+                    else key_number++;
+                    k = j;
+                    break;
+                }
+            }
+            if (k == -1) return "Ошибка.";
+            //Формула: c = (p+k)%n, где p - порядковый номер i-той буквы слова в алфавите, k - порядковый номер i-той буквы ключа, n - мощность алфавита
+            output.append(alphabet.at((p+k)%n));
 
-//     return result;
-// }
+        }
+        //Знаки, которые не являются буквами, не шифруются
+        else output.append(input.at(i));
+    }
+    return output;
+}
 
 
-// std::string desDecrypt(const std::string &cipherText, const std::string &key)
-// {
-//     // Инициализация контекста расшифрования
-//     EVP_CIPHER_CTX *ctx;
-//     ctx = EVP_CIPHER_CTX_new();
-//     EVP_DecryptInit_ex(ctx, EVP_aes_128_ecb(), NULL, (const unsigned char *)key.c_str(), NULL);
 
-//     // Выделение памяти для буфера расшифрования
-//     int plainTextLen = cipherText.length();
-//     unsigned char *plainText = new unsigned char[plainTextLen];
 
-//     // Расшифрование
-//     int len;
-//     EVP_DecryptUpdate(ctx, plainText, &len, (const unsigned char *)cipherText.c_str(), cipherText.length());
-//     int plainLen = len;
+QString Decrypt( QString alphabet, QString input, QString key)
+{
+    input = input.toLower();
+    key = key.toLower();
+    QString output;
+    int key_number = 0;
+    int n = (alphabet.length());
+    int k = -1;
+    int p = -1;
 
-//     // Завершение расшифрования
-//     EVP_DecryptFinal_ex(ctx, plainText + len, &len);
-//     plainLen += len;
+    for(int i =0; i<(input.length()); i++)
+    {
+        if (input.at(i).isLetter())
+        {
 
-//     std::string result((char *)plainText, plainLen);
+            //Поиск i-той буквы зашифрованного слова в алфавите
+            for(int z =0; z < n; z++)
+            {
+                if(alphabet.at(z) == input.at(i))
+                {
+                    p = z;
+                    break;
+                }
+            }
+            if (p == -1) return "Ошибка.";
 
-//     // Очистка и освобождение ресурсов
-//     delete[] plainText;
-//     EVP_CIPHER_CTX_free(ctx);
-
-//     return result;
-// }
+            //Поиск i-той буквы ключа в алфавите
+            for(int j = 0; j < n;j++)
+            {
+                if(alphabet.at(j) == key.at(key_number))
+                {
+                    if(key_number == (key.length()-1)) key_number=0;
+                    else key_number++;
+                    k =j;
+                    break;
+                }
+            }
+            if (k == -1) return "Ошибка.";
+            //Формула: c = (p-k+n)%n, где p - порядковый номер i-той буквы слова в алфавите, k - порядковый номер i-той буквы ключа, n - мощность алфавита
+            output.append(alphabet.at((p-k+n)%n));
+        }
+        //Знаки, которые не являются буквами, не шифруются
+        else output.append(input.at(i));
+    }
+    return output;
+}
 
 
 
@@ -283,18 +351,17 @@ QByteArray allShortestPaths(const QString& Login, const std::vector<std::vector<
         {
             result.append(QString::number(dist).toUtf8()).append(" ");
         }
-        result.append("\n");
+        result.append("\r\n");
     }
 
-    if (checkAuth == 1)
+    qDebug() << result;
+
+    if (checkAuth == 1 && AuthAnswer == Login)
     {
         checkAuth = 0;
-        QStringList taskInfo;
-        taskInfo.append("UPDATE users SET task = :task, solution = :solution WHERE login = :login;");
-        taskInfo.append(":task");
-        taskInfo.append(task);
-        taskInfo.append(":solution");
-        taskInfo.append(result);
+        AuthAnswer.clear();
+        QStringList taskInfo; // в базу данных в task добавлять или убавлять 1, вести его как счетчик
+        taskInfo.append("UPDATE users SET graph = graph + 1 WHERE login = :login;");
         taskInfo.append(":login");
         taskInfo.append(Login);
         // Выполняем запрос
@@ -303,5 +370,3 @@ QByteArray allShortestPaths(const QString& Login, const std::vector<std::vector<
     }
     return result;
 }
-
-

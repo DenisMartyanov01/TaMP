@@ -10,17 +10,17 @@
 #include "mydb.h"
 #include <regex>
 #include <string>
-// #include <openssl/aes.h>
-// #include <openssl/evp.h>
+
 
 QByteArray parsing(QString);
 QByteArray auth(QString, QString);
 QByteArray reg(QString, QString, QString);
 QByteArray lookmystat(QString, QString);
 QByteArray lookallstat(QString, QString);
+QString Encrypt(QString, QString, QString);
+QString Decrypt(QString, QString, QString);
 
-// QByteArray desEncrypt(QByteArray plaintext, QByteArray);
-// QByteArray desDecrypt(QByteArray ciphertext, QByteArray key);
+void decreaseGraphCount(const QString&);
 
 std::vector<std::vector<int>> floydWarshall(const std::vector<std::vector<int>>&);
 QByteArray allShortestPaths(const QString&, const std::vector<std::vector<int>>&);

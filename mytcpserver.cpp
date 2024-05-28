@@ -38,7 +38,21 @@ void MyTcpServer::slotServerRead(){
         QByteArray array = current_socket->readAll();
         res.append(array);
     }
-    current_socket->write(parsing(res));
+
+    // Задаем алфавит и ключ шифрования
+    QString alphabet = "abcdefghijklmnopqrstuvwxyz";
+    QString key = "yourencryptionkey"; // заменить на реальный ключ
+
+    // Расшифровка входящих данных
+    QString decryptedRequest = Decrypt(alphabet, res, key);
+
+    // Обработка расшифрованного запроса
+    QByteArray response = parsing(decryptedRequest);
+
+    // Шифрование ответа перед отправкой
+    QString encryptedResponse = Encrypt(alphabet, QString::fromUtf8(response), key);
+
+    current_socket->write(encryptedResponse.toUtf8());
 }
 
 void MyTcpServer::slotClientDisconnected(){
