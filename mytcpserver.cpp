@@ -39,7 +39,7 @@ void MyTcpServer::slotServerRead(){
         res.append(array);
     }
 
-    // Задаем алфавит и ключ шифрования
+   // Задаем алфавит и ключ шифрования
     QString alphabet = "abcdefghijklmnopqrstuvwxyz";
     QString key = "yourencryptionkey"; // заменить на реальный ключ
 

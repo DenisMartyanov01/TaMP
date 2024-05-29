@@ -17,6 +17,7 @@ QByteArray auth(QString, QString);
 QByteArray reg(QString, QString, QString);
 QByteArray lookmystat(QString, QString);
 QByteArray lookallstat(QString, QString);
+QByteArray sortallstat(QString, QString, QString);
 QString Encrypt(QString, QString, QString);
 QString Decrypt(QString, QString, QString);
 

@@ -41,6 +41,10 @@ QByteArray parsing(QString Request)
     {
         return lookallstat(parts.at(1), parts.at(2));
     }
+    else if (parts.contains("sortallstat") && parts.length() > 2)
+    {
+        return sortallstat(parts.at(1), parts.at(2), parts.at(3));
+    }
     else if (parts.at(0) == "graph" && parts.length() > 2)
     {
         bool conversionOk;
@@ -172,27 +176,59 @@ QByteArray lookmystat(QString Login, QString Password)
         return QByteArray("mystatError\r\n");
 }
 
+
+
 QByteArray lookallstat(QString Login, QString Password)
 {
     QStringList Src;
-    Src.append("SELECT * FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
+    Src.append("SELECT id, login, email, graph, music, newton FROM users WHERE EXISTS ( SELECT 1 FROM admins WHERE login = :login AND password = :password);"); //проверка на наличие прав админа
     Src.append(":login");
     Src.append(Login);
     Src.append(":password");
     Src.append(Password);
     Src = MyDB::get_instance().queryToDB(Src);
+
     if (Src.size() > 0)
     {
-        QString res = "allstatComplete&";
+        QString res;
         while(Src.size() > 0)
         {
             res.append(Src.front()).append("&");
             Src.pop_front();
         }
+
         return res.toUtf8();
     }
     else
-        return QByteArray("allstatError\r\n");
+    {
+        return QByteArray("allstatError&");
+    }
+}
+
+QByteArray sortallstat(QString Login, QString Password, QString Columnname)
+{
+    QStringList Sortsrc;
+    Sortsrc.append("SELECT id, login, email, graph, music, newton FROM users WHERE EXISTS (SELECT 1 FROM admins WHERE login = :login AND password = :password) ORDER BY " + Columnname + " DESC;");
+    Sortsrc.append(":login");
+    Sortsrc.append(Login);
+    Sortsrc.append(":password");
+    Sortsrc.append(Password);
+    Sortsrc = MyDB::get_instance().queryToDB(Sortsrc);
+
+    if(Sortsrc.size() > 0)
+    {
+        QString sortres;
+        while(Sortsrc.size() > 0)
+        {
+            sortres.append(Sortsrc.front()).append("&");
+            Sortsrc.pop_front();
+        }
+        return sortres.toUtf8();
+    }
+    else
+    {
+        return QByteArray("sortallstatError&");
+    }
 }
 
 
