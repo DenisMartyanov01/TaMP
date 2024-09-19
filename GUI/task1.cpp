@@ -219,17 +219,43 @@ double newton(double a, double b, double c, double left, double right)
     if (right <= left) {
         return -1.0001;
     }
-    double d = (right - left) / 1000;
-    double x = func(a, b, c, left);
-    double delta_x = left + d;
+
+    double x = (left + right) / 2; // начальное приближение
+
+    while (fabs(func(a, b, c, x)) > 1) // пока не достигнем достаточной близости к нулю
+    {
+        double f_x = func(a, b, c, x);
+        double f_prime_x = deriv_func(a, b, x);
+        if (fabs(f_prime_x) < 1) // избегаем деления на ноль
+            return -1.0001;
+        x = x - f_x / f_prime_x; // обновляем x по методу Ньютона
+        if (x < left || x > right) // проверяем, остаемся ли мы в интервале
+            return -1.0001;
+    }
+
+    return x;
+}
+
+
+/*
+double newton(double a, double b, double c, double left, double right)
+{
+    if (right <= left) {
+        return -1.0001;
+    }
+    //double d = (right - left) / 1000;
+    double delta_x = left;
     while (delta_x <= right){
-        if (diff_sign(x, func(a, b, c, delta_x))){
+        if (diff_sign(delta_x, delta_x - (func(a, b, c, delta_x) / deriv_func(a, b, delta_x)))){
             return delta_x - (func(a, b, c, delta_x) / deriv_func(a, b, delta_x));
         }
-        delta_x += d;
+        else if (delta_x == delta_x - (func(a, b, c, delta_x) / deriv_func(a, b, delta_x))){
+            return delta_x;
+        }
+        delta_x = delta_x - (func(a, b, c, delta_x) / deriv_func(a, b, delta_x));
     }
     return -1.0001;
-}
+}*/
 
 void Task1::on_pushButton_Send_clicked()
 {

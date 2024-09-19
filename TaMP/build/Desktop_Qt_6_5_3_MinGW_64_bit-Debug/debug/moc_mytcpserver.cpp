@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../../mytcpserver.h"
+#include "../../../../TaMP_fall/TaMP/mytcpserver.h"
 #include <QtNetwork/QSslPreSharedKeyAuthenticator>
 #include <QtNetwork/QSslError>
 #include <QtCore/qmetatype.h>

@@ -74,10 +74,12 @@ QByteArray parsing(QString Request)
     else if(parts.at(0) == "newton" && parts.length() > 2)
     {
         //запись в БД
+        return QByteArray("functionError\r\n");
     }
     else if(parts.at(0) == "graph" && parts.length() > 2)
     {
         //запись в БД
+        return QByteArray("functionError\r\n");
     }
     else
     {
@@ -413,4 +415,43 @@ QByteArray allShortestPaths(const QString& Login, const std::vector<std::vector<
         qDebug() << "dataSave\r\n";
     }
     return result;
+}
+
+
+double func(double a, double b, double c, double x) {
+    return a * x * x + b * x + c;
+}
+
+double deriv_func(double a, double b, double x) {
+    return 2 * a * x + b;
+}
+
+bool diff_sign(double first, double second)
+{
+    if ((first > 0 && second <= 0) || (first <= 0 && second > 0)){
+        return true;
+    }
+    return false;
+}
+
+double newton(double a, double b, double c, double left, double right)
+{
+    if (right <= left) {
+        return -1.0001;
+    }
+
+    double x = (left + right) / 2; // начальное приближение
+
+    while (fabs(func(a, b, c, x)) > 1) // пока не достигнем достаточной близости к нулю
+    {
+        double f_x = func(a, b, c, x);
+        double f_prime_x = deriv_func(a, b, x);
+        if (fabs(f_prime_x) < 1) // избегаем деления на ноль
+            return -1.0001;
+        x = x - f_x / f_prime_x; // обновляем x по методу Ньютона
+        if (x < left || x > right) // проверяем, остаемся ли мы в интервале
+            return -1.0001;
+    }
+
+    return x;
 }

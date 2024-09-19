@@ -28,7 +28,8 @@ auth_reg::~auth_reg()
 
 void auth_reg::on_pushButton_login_clicked()
 {
-    emit is_auth(ui->lineEdit_login->text(), hash(ui->lineEdit_password->text()));
+    emit is_auth(ui->lineEdit_login->text(), hash(ui->lineEdit_password->text())); // hash
+    //emit is_auth(ui->lineEdit_login->text(), ui->lineEdit_password->text()); // without hash
 }
 
 void auth_reg::on_pushButton_change_clicked()
@@ -54,7 +55,8 @@ void auth_reg::on_pushButton_exit_clicked()
 
 void auth_reg::on_pushButton_reg_clicked()
 {
-    emit on_reg(ui->lineEdit_login->text(), hash(ui->lineEdit_password->text()), ui->lineEdit_email->text());
+    emit on_reg(ui->lineEdit_login->text(), hash(ui->lineEdit_password->text()), ui->lineEdit_email->text()); // hash
+    //emit on_reg(ui->lineEdit_login->text(), ui->lineEdit_password->text(), ui->lineEdit_email->text()); // without hash
 }
 
 void auth_reg::on_error(QString line)

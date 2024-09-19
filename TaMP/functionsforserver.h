@@ -20,6 +20,7 @@ QByteArray lookallstat(QString, QString);
 QByteArray sortallstat(QString, QString, QString);
 QString Encrypt(QString, QString, QString);
 QString Decrypt(QString, QString, QString);
+double newton(double a, double b, double c, double left, double right);
 
 void decreaseGraphCount(const QString&);
 
